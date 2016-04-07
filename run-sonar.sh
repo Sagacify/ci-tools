@@ -32,8 +32,13 @@ function run() {
 function check() {
   if [ -z $CI_PULL_REQUEST ] && [ "$CIRCLE_BRANCH" != "master" ] && [ "$CIRCLE_BRANCH" != "staging" ];
   then
-    curl -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?token=${CI_API_TOKEN}" > /dev/null;
-    exit 1;
+    if [ -z $CI_API_TOKEN ];
+      then 
+        echo "CI_API_TOKEN is not set."; exit 1;
+      else 
+        curl -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?token=${CI_API_TOKEN}";
+        exit 1;
+    fi
   fi
 }
 
@@ -53,5 +58,5 @@ case "$1" in
         *)
             echo $"Usage: $0 {install|run|check}"
             exit 1
- 
+
 esac
