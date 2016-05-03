@@ -9,6 +9,10 @@ function install() {
 
 function run() {
   if [ $CI_PULL_REQUEST ];
+    if [ "$CIRCLE_BRANCH" != "staging" ] & [ "$STAGING_EXISTS" ];
+      then SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging
+      else SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME
+    fi  
     then ./$SONAR_VERSION/bin/sonar-runner \
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
@@ -19,12 +23,22 @@ function run() {
       -Dsonar.github.pullRequest=${CI_PULL_REQUEST##*/} \
       -Dsonar.github.oauth=$SAGA_STALIN_TOKEN \
       -Dsonar.analysis.mode=preview;
-  elif [ "$CIRCLE_BRANCH" == "master" ];
+  fi
+  if [ "$CIRCLE_BRANCH" == "master" ];
     then ./$SONAR_VERSION/bin/sonar-runner \
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME \
+      -Dsonar.sourceEncoding=UTF-8;
+  fi
+  if [ "$CIRCLE_BRANCH" == "staging" ];
+    then ./$SONAR_VERSION/bin/sonar-runner \
+      -Dsonar.host.url=$SONAR_HOST \
+      -Dsonar.login=$SONAR_LOGIN \
+      -Dsonar.password=$SONAR_PASSWORD \
+      -Dsonar.projectName=
+      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging \
       -Dsonar.sourceEncoding=UTF-8;
   fi
 }
