@@ -37,7 +37,6 @@ function run() {
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
-      -Dsonar.projectName=
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging \
       -Dsonar.sourceEncoding=UTF-8;
   fi
