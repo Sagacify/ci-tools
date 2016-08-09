@@ -23,22 +23,13 @@ function run() {
       -Dsonar.github.pullRequest=${CI_PULL_REQUEST##*/} \
       -Dsonar.analysis.mode=preview;
   fi
-  if [ "$CIRCLE_BRANCH" == "master" ];
-    then ./$SONAR_VERSION/bin/sonar-runner \
-      -Dsonar.host.url=$SONAR_HOST \
-      -Dsonar.login=$SONAR_LOGIN \
-      -Dsonar.password=$SONAR_PASSWORD \
-      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME \
-      -Dsonar.sourceEncoding=UTF-8;
-  fi
-  if [ "$CIRCLE_BRANCH" == "staging" ];
-    then ./$SONAR_VERSION/bin/sonar-runner \
-      -Dsonar.host.url=$SONAR_HOST \
-      -Dsonar.login=$SONAR_LOGIN \
-      -Dsonar.password=$SONAR_PASSWORD \
-      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging \
-      -Dsonar.sourceEncoding=UTF-8;
-  fi
+  ./$SONAR_VERSION/bin/sonar-runner \
+    -Dsonar.host.url=$SONAR_HOST \
+    -Dsonar.login=$SONAR_LOGIN \
+    -Dsonar.password=$SONAR_PASSWORD \
+    -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME \
+    -Dsonar.branch=$CIRCLE_BRANCH \
+    -Dsonar.sourceEncoding=UTF-8;
 }
 
 function check() {
