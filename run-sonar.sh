@@ -1,8 +1,9 @@
 #!/bin/bash
 
-SONAR_VERSION="sonar-scanner-2.6.1"
+SONAR_VERSION="sonar-scanner-2.8"
 
 function install() {
+
   wget -N "https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/${SONAR_VERSION}.zip";
   unzip -o "${SONAR_VERSION}.zip";
 }
