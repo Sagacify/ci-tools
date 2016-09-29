@@ -18,7 +18,10 @@ function run() {
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
+      -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME \
+      -Dsonar.projectVersion=$CIRCLE_BUILD_NUM \
+      -Dsonar.sources=. \
       -Dsonar.sourceEncoding=UTF-8 \
       -Dsonar.github.repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
       -Dsonar.github.pullRequest=${CI_PULL_REQUEST##*/} \
@@ -29,7 +32,10 @@ function run() {
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
+      -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME \
+      -Dsonar.projectVersion=$CIRCLE_BUILD_NUM \
+      -Dsonar.sources=. \
       -Dsonar.sourceEncoding=UTF-8;
   fi
   if [ "$CIRCLE_BRANCH" == "staging" ];
@@ -37,7 +43,10 @@ function run() {
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
+      -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME-staging \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging \
+      -Dsonar.projectVersion=$CIRCLE_BUILD_NUM \
+      -Dsonar.sources=. \
       -Dsonar.sourceEncoding=UTF-8;
   fi
 }
