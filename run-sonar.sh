@@ -9,36 +9,40 @@ function install() {
 }
 
 function run() {
+  # Params used everywhere
+  DEFAULT_SONAR_PARAMS="-Dsonar.host.url=$SONAR_HOST
+        -Dsonar.login=$SONAR_LOGIN
+        -Dsonar.password=$SONAR_PASSWORD
+        -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME
+        -Dsonar.projectVersion=$CIRCLE_BUILD_NUM
+        -Dsonar.sourceEncoding=UTF-8"
+
+  # If there is no sonar-project.properties, analyses src folder by default
+  if [ ! -f "sonar-project.properties" ] & [ -d "src" ];
+      then DEFAULT_PARAMS+="-Dsonar.sources=src";
+      else echo "If your source files are not in the src folder,
+        you must define the sonar.source property in the sonar-project.properties";
+        exit -1;
+  fi
+
   if [ $CI_PULL_REQUEST ];
     if [ "$CIRCLE_BRANCH" != "staging" ] & [ "$STAGING_EXISTS" ];
       then SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging
       else SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME
     fi
-    then ./$SONAR_VERSION/bin/sonar-runner \
-      -Dsonar.host.url=$SONAR_HOST \
-      -Dsonar.login=$SONAR_LOGIN \
-      -Dsonar.password=$SONAR_PASSWORD \
-      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME \
-      -Dsonar.sourceEncoding=UTF-8 \
+    then ./$SONAR_VERSION/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
+      -Dsonar.projectKey=$SONAR_PROJECT_KEY \
       -Dsonar.github.repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
       -Dsonar.github.pullRequest=${CI_PULL_REQUEST##*/} \
       -Dsonar.analysis.mode=preview;
   fi
   if [ "$CIRCLE_BRANCH" == "master" ];
-    then ./$SONAR_VERSION/bin/sonar-runner \
-      -Dsonar.host.url=$SONAR_HOST \
-      -Dsonar.login=$SONAR_LOGIN \
-      -Dsonar.password=$SONAR_PASSWORD \
-      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME \
-      -Dsonar.sourceEncoding=UTF-8;
+    then ./$SONAR_VERSION/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
+      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME;
   fi
   if [ "$CIRCLE_BRANCH" == "staging" ];
-    then ./$SONAR_VERSION/bin/sonar-runner \
-      -Dsonar.host.url=$SONAR_HOST \
-      -Dsonar.login=$SONAR_LOGIN \
-      -Dsonar.password=$SONAR_PASSWORD \
-      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging \
-      -Dsonar.sourceEncoding=UTF-8;
+    then ./$SONAR_VERSION/bin/sonar-scanner DEFAULT_SONAR_PARAMS \
+      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging;
   fi
 }
 
