@@ -19,7 +19,7 @@ function run() {
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
       -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME \
-      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME \
+      -Dsonar.projectKey=$SONAR_PROJECT_KEY \
       -Dsonar.projectVersion=$CIRCLE_BUILD_NUM \
       -Dsonar.sources=. \
       -Dsonar.sourceEncoding=UTF-8 \
