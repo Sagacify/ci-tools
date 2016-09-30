@@ -77,7 +77,10 @@ function check() {
         echo "CI_API_TOKEN is not set."; exit 1;
       else
         curl -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?circle-token=${CI_API_TOKEN}";
-        exit 1;
+        if [ $? -ne 0 ]; then
+          echo "Could not cancel the build. Most likely explanation is the CI_API_TOKEN was incorrect."
+          exit 1;
+        fi
     fi
   fi
 }
