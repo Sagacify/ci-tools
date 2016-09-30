@@ -14,7 +14,7 @@ function run() {
       then SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging
       else SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME
     fi
-    then ./$SONAR_VERSION/bin/sonar-runner \
+    then ./$SONAR_VERSION/bin/sonar-scanner \
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
@@ -28,7 +28,7 @@ function run() {
       -Dsonar.analysis.mode=preview;
   fi
   if [ "$CIRCLE_BRANCH" == "master" ];
-    then ./$SONAR_VERSION/bin/sonar-runner \
+    then ./$SONAR_VERSION/bin/sonar-scanner \
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
@@ -39,7 +39,7 @@ function run() {
       -Dsonar.sourceEncoding=UTF-8;
   fi
   if [ "$CIRCLE_BRANCH" == "staging" ];
-    then ./$SONAR_VERSION/bin/sonar-runner \
+    then ./$SONAR_VERSION/bin/sonar-scanner \
       -Dsonar.host.url=$SONAR_HOST \
       -Dsonar.login=$SONAR_LOGIN \
       -Dsonar.password=$SONAR_PASSWORD \
