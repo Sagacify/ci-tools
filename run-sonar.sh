@@ -20,7 +20,7 @@ function run() {
   # If there is no sonar-project.properties, analyses src folder by default
   if [ ! -f "sonar-project.properties" ];
     then if [ -d "src" ];
-      then DEFAULT_PARAMS+="-Dsonar.sources=src";
+      then DEFAULT_SONAR_PARAMS+="-Dsonar.sources=src";
       else
         echo "If your source files are not in the src folder, you must define the sonar.sources property in sonar-project.properties";
         echo "https://github.com/Sagacify/bible/wiki/continuous_integration#sonar-projectproperties"
