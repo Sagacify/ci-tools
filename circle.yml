@@ -1,0 +1,10 @@
+# Define the settings of the machine used for the build
+machine:
+  java:
+    version: openjdk8
+
+# Launch the test into the docker image
+test:
+  override:
+    - ./run-sonar.sh check # should pass
+
