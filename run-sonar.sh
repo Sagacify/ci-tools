@@ -21,7 +21,9 @@ function run() {
   if [ ! -f "sonar-project.properties" ];
     then if [ -d "src" ];
       then DEFAULT_PARAMS+="-Dsonar.sources=src";
-      else echo "If your source files are not in the src folder, you must define the sonar.sources property in sonar-project.properties";
+      else
+        echo "If your source files are not in the src folder, you must define the sonar.sources property in sonar-project.properties";
+        echo "https://github.com/Sagacify/bible/wiki/continuous_integration#sonar-projectproperties"
         exit -1;
     fi
   fi
@@ -66,22 +68,27 @@ function check() {
           echo "version is 1.8"
       else
           echo "version is not 1.8"
+          echo "https://github.com/Sagacify/bible/wiki/continuous_integration#java-8"
           exit 1
       fi
   fi
 
   if [ -z $CI_PULL_REQUEST ] && [ "$CIRCLE_BRANCH" != "master" ] && [ "$CIRCLE_BRANCH" != "staging" ];
   then
-    echo "Stopping build as it neither a pull-request, master nor staging."
+    echo "Stopping build as it is neither a pull-request, master nor staging."
+    echo "https://github.com/Sagacify/bible/wiki/continuous_integration#syncronicity-issues"
     if [ -z $CI_API_TOKEN ];
       then
-        echo "CI_API_TOKEN is not set."; exit 1;
+        echo "CI_API_TOKEN is not set.";
+        echo "https://github.com/Sagacify/bible/wiki/continuous_integration#prerequisites"
+        exit 1;
       else
         STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?circle-token=${CI_API_TOKEN}")
         if [ $STATUS_CODE == "200" ];
           then echo "This build was canceled.";
           else
             echo "Tried cancelling the build, but the ci token was invalid.";
+            echo "https://github.com/Sagacify/bible/wiki/continuous_integration#prerequisites"
             exit -1;
         fi
     fi
