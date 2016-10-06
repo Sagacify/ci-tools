@@ -15,6 +15,10 @@ function run() {
         -Dsonar.password=$SONAR_PASSWORD
         -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME
         -Dsonar.projectVersion=$CIRCLE_BUILD_NUM
+        -Dsonar.links.homepage=$CIRCLE_REPOSITORY_URL
+        -Dsonar.links.ci=$CIRCLE_BUILD_URL
+        -Dsonar.links.issue=$CIRCLE_REPOSITORY_URL/issues
+        -Dsonar.links.scm=$CIRCLE_REPOSITORY_URL
         -Dsonar.sourceEncoding=UTF-8"
 
   # If there is no sonar-project.properties, analyses src folder by default
