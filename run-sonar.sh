@@ -72,12 +72,18 @@ function check() {
 
   if [ -z $CI_PULL_REQUEST ] && [ "$CIRCLE_BRANCH" != "master" ] && [ "$CIRCLE_BRANCH" != "staging" ];
   then
+    echo "Stopping build as it neither a pull-request, master nor staging."
     if [ -z $CI_API_TOKEN ];
       then
         echo "CI_API_TOKEN is not set."; exit 1;
       else
-        curl -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?circle-token=${CI_API_TOKEN}";
-        exit 1;
+        STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?circle-token=${CI_API_TOKEN}")
+        if [ $STATUS_CODE == "200" ];
+          then echo "This build was canceled.";
+          else
+            echo "Tried cancelling the build, but the ci token was invalid.";
+            exit -1;
+        fi
     fi
   fi
 }
