@@ -8,9 +8,13 @@ test:
   override:
     # should pass
     - ./run-sonar.sh check
+    - ./run-sonar.sh install
     # Test error message if no PR and NO TOKEN
     - CI_API_TOKEN='' CI_PULL_REQUEST='' CIRCLE_BRANCH='prout' ./run-sonar.sh check; if [ $? == 0 ]; then exit 1; fi
     # Test message if no PR and correct token, but cancel previous build (sonar returns 200 status)
     - CIRCLE_BUILD_NUM=$((CIRCLE_BUILD_NUM-1)) CI_PULL_REQUEST='' ./run-sonar.sh check;
     # Test message if no PR and incorrect token
     - CI_API_TOKEN='PONEY' CI_PULL_REQUEST='' ./run-sonar.sh check; if [ $? == 0 ]; then exit 1; fi
+
+    # test review of project
+    - mkdir src && CIRCLE_BRANCH='master' ./run-sonar.sh run && rm -r src
