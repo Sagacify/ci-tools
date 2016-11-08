@@ -42,7 +42,7 @@ function run() {
   if [ -f "sonar-project.properties" ];
     then SAGA_JS_COV=$(<sonar-project.properties grep 'sonar.javascript.lcov.reportPath=' | grep -o '[^=]*$');
   fi
-  if [ -z $SAGA_JS_COV & -f "coverage/lcov_report.info" ];
+  if [ -z $SAGA_JS_COV & -f "coverage/lcov.info" ];
     then SAGA_JS_COV="lcov_report.info"
       sed -e "s=/var/www=$(pwd)=" coverage/lcov.info > "$SAGA_JS_COV";
   fi
