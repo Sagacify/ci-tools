@@ -38,6 +38,18 @@ function run() {
         -Dsonar.sourceEncoding=UTF-8
         -Dsonar.sources=$SAGA_SOURCE_DIR"
 
+  # detect javascript coverage:
+  if [ -f "sonar-project.properties" ];
+    then SAGA_JS_COV=$(<sonar-project.properties grep 'sonar.javascript.lcov.reportPath=' | grep -o '[^=]*$');
+  fi
+  if [ -z $SAGA_JS_COV & -f "coverage/lcov_report.info" ];
+    then SAGA_JS_COV="lcov_report.info"
+      sed -e "s=/var/www=$(pwd)=" coverage/lcov.info > "$SAGA_JS_COV";
+  fi
+  if [ $SAGA_JS_COV ];
+    then DEFAULT_SONAR_PARAMS+=" -Dsonar.javascript.lcov.reportPath=$SAGA_JS_COV";
+  fi
+
   if [ $CI_PULL_REQUEST ];
     if [ "$CIRCLE_BRANCH" != "staging" ] & [ "$STAGING_EXISTS" ];
       then SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging
