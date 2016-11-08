@@ -3,12 +3,28 @@
 SONAR_VERSION="sonar-scanner-2.8"
 
 function install() {
-
   wget -N "https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/${SONAR_VERSION}.zip";
   unzip -o "${SONAR_VERSION}.zip";
 }
 
+function findSourceDir() {
+  if [ $SAGA_SOURCE_DIR ]; then return; fi;
+
+  if [ -f "sonar-project.properties" ];
+    then SAGA_SOURCE_DIR=$(<sonar-project.properties grep 'sonar.sources=' | grep -o '[^=]*$');
+  fi
+  if [ $SAGA_SOURCE_DIR ]; then return; fi;
+
+  if [ -d "src" ];
+    then SAGA_SOURCE_DIR="src"
+    else  echo "No src folder and no sonar-project.properties file."
+          echo "Can't find project's sources."
+          exit -1
+  fi
+}
+
 function run() {
+  findSourceDir;
   # Params used everywhere
   DEFAULT_SONAR_PARAMS="-Dsonar.host.url=$SONAR_HOST
         -Dsonar.login=$SONAR_LOGIN
@@ -19,17 +35,30 @@ function run() {
         -Dsonar.links.ci=$CIRCLE_BUILD_URL
         -Dsonar.links.issue=$CIRCLE_REPOSITORY_URL/issues
         -Dsonar.links.scm=$CIRCLE_REPOSITORY_URL
-        -Dsonar.sourceEncoding=UTF-8"
+        -Dsonar.sourceEncoding=UTF-8
+        -Dsonar.sources=$SAGA_SOURCE_DIR"
 
-  # If there is no sonar-project.properties, analyses src folder by default
-  if [ ! -f "sonar-project.properties" ];
-    then if [ -d "src" ];
-      then DEFAULT_SONAR_PARAMS+=" -Dsonar.sources=src";
-      else
-        echo "If your source files are not in the src folder, you must define the sonar.sources property in sonar-project.properties";
-        echo "https://github.com/Sagacify/bible/wiki/continuous_integration#sonar-projectproperties"
-        exit -1;
-    fi
+  # detect javascript coverage:
+  if [ -f "sonar-project.properties" ];
+    then SAGA_JS_COV=$(<sonar-project.properties grep 'sonar.javascript.lcov.reportPath=' | grep -o '[^=]*$');
+  fi
+  if [ -z $SAGA_JS_COV & -f "coverage/lcov_report.info" ];
+    then SAGA_JS_COV="lcov_report.info"
+      sed -e "s=/var/www=$(pwd)=" coverage/lcov.info > "$SAGA_JS_COV";
+  fi
+  if [ $SAGA_JS_COV ];
+    then DEFAULT_SONAR_PARAMS+=" -Dsonar.javascript.lcov.reportPath=$SAGA_JS_COV";
+  fi
+
+  # detect python coverage:
+  if [ -f "sonar-project.properties" ];
+    then SAGA_PY_COV=$(<sonar-project.properties grep 'sonar.python.coverage.reportPath=' | grep -o '[^=]*$');
+  fi
+  if [ -z $SAGA_PY_COV & -f "coverage/cov.xml" ];
+    then SAGA_PY_COV="coverage/cov.xml"
+  fi
+  if [ $SAGA_PY_COV ];
+    then DEFAULT_SONAR_PARAMS+=" -Dsonar.python.coverage.reportPath=$SAGA_PY_COV";
   fi
 
   if [ $CI_PULL_REQUEST ];
