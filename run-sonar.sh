@@ -50,6 +50,17 @@ function run() {
     then DEFAULT_SONAR_PARAMS+=" -Dsonar.javascript.lcov.reportPath=$SAGA_JS_COV";
   fi
 
+  # detect python coverage:
+  if [ -f "sonar-project.properties" ];
+    then SAGA_PY_COV=$(<sonar-project.properties grep 'sonar.python.coverage.reportPath=' | grep -o '[^=]*$');
+  fi
+  if [ -z $SAGA_PY_COV & -f "coverage/cov.xml" ];
+    then SAGA_PY_COV="coverage/cov.xml"
+  fi
+  if [ $SAGA_PY_COV ];
+    then DEFAULT_SONAR_PARAMS+=" -Dsonar.python.coverage.reportPath=$SAGA_PY_COV";
+  fi
+
   if [ $CI_PULL_REQUEST ];
     if [ "$CIRCLE_BRANCH" != "staging" ] & [ "$STAGING_EXISTS" ];
       then SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging
