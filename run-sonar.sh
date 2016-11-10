@@ -32,6 +32,24 @@ function getPyCoverage() {
   fi
 }
 
+function getPyLintReport() {
+   # detect if is python project;
+  if (( $(find $SAGA_SOURCE_DIR | grep .py$ | wc -l) == 0 ));
+    then return; # Not a python project
+  fi
+
+  if [ -f "sonar-project.properties" ];
+    then SAGA_PY_LINT=$(<sonar-project.properties grep 'sonar.python.pylint.reportPath =' | grep -o '[^=]*$');
+  fi
+
+  if [ -z $SAGA_PY_LINT ];
+    then if [ -f "coverage/pylint.report" ];
+      then DEFAULT_SONAR_PARAMS+=" -sonar.python.pylint.reportPath=coverage/pylint.report";
+      else pip install pylint;
+    fi
+  fi
+}
+
 function findSourceDir() {
   if [ $SAGA_SOURCE_DIR ]; then return; fi;
 
@@ -65,6 +83,7 @@ function run() {
 
   getJsCoverage;
   getPyCoverage;
+  getPyLintReport;
 
   if [ $CI_PULL_REQUEST ];
     if [ "$CIRCLE_BRANCH" != "staging" ] & [ "$STAGING_EXISTS" ];
