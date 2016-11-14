@@ -7,6 +7,49 @@ function install() {
   unzip -o "${SONAR_VERSION}.zip";
 }
 
+function getJsCoverage() {
+  if [ -f "sonar-project.properties" ];
+    then SAGA_JS_COV=$(<sonar-project.properties grep 'sonar.javascript.lcov.reportPath=' | grep -o '[^=]*$');
+  fi
+  if [ -z $SAGA_JS_COV & -f "coverage/lcov.info" ];
+    then SAGA_JS_COV="lcov_report.info"
+      sed -e "s=/var/www=$(pwd)=" coverage/lcov.info > "$SAGA_JS_COV";
+  fi
+  if [ $SAGA_JS_COV ];
+    then DEFAULT_SONAR_PARAMS+=" -Dsonar.javascript.lcov.reportPath=$SAGA_JS_COV";
+  fi
+}
+
+function getPyCoverage() {
+  if [ -f "sonar-project.properties" ];
+    then SAGA_PY_COV=$(<sonar-project.properties grep 'sonar.python.coverage.reportPath=' | grep -o '[^=]*$');
+  fi
+  if [ -z $SAGA_PY_COV & -f "coverage/cov.xml" ];
+    then SAGA_PY_COV="coverage/cov.xml"
+  fi
+  if [ $SAGA_PY_COV ];
+    then DEFAULT_SONAR_PARAMS+=" -Dsonar.python.coverage.reportPath=$SAGA_PY_COV";
+  fi
+}
+
+function getPyLintReport() {
+   # detect if is python project;
+  if (( $(find $SAGA_SOURCE_DIR | grep .py$ | wc -l) == 0 ));
+    then return; # Not a python project
+  fi
+
+  if [ -f "sonar-project.properties" ];
+    then SAGA_PY_LINT=$(<sonar-project.properties grep 'sonar.python.pylint.reportPath =' | grep -o '[^=]*$');
+  fi
+
+  if [ -z $SAGA_PY_LINT ];
+    then if [ -f "coverage/pylint.report" ];
+      then DEFAULT_SONAR_PARAMS+=" -sonar.python.pylint.reportPath=coverage/pylint.report";
+      else pip install pylint;
+    fi
+  fi
+}
+
 function findSourceDir() {
   if [ $SAGA_SOURCE_DIR ]; then return; fi;
 
@@ -38,28 +81,9 @@ function run() {
         -Dsonar.sourceEncoding=UTF-8
         -Dsonar.sources=$SAGA_SOURCE_DIR"
 
-  # detect javascript coverage:
-  if [ -f "sonar-project.properties" ];
-    then SAGA_JS_COV=$(<sonar-project.properties grep 'sonar.javascript.lcov.reportPath=' | grep -o '[^=]*$');
-  fi
-  if [ -z $SAGA_JS_COV & -f "coverage/lcov.info" ];
-    then SAGA_JS_COV="lcov_report.info"
-      sed -e "s=/var/www=$(pwd)=" coverage/lcov.info > "$SAGA_JS_COV";
-  fi
-  if [ $SAGA_JS_COV ];
-    then DEFAULT_SONAR_PARAMS+=" -Dsonar.javascript.lcov.reportPath=$SAGA_JS_COV";
-  fi
-
-  # detect python coverage:
-  if [ -f "sonar-project.properties" ];
-    then SAGA_PY_COV=$(<sonar-project.properties grep 'sonar.python.coverage.reportPath=' | grep -o '[^=]*$');
-  fi
-  if [ -z $SAGA_PY_COV & -f "coverage/cov.xml" ];
-    then SAGA_PY_COV="coverage/cov.xml"
-  fi
-  if [ $SAGA_PY_COV ];
-    then DEFAULT_SONAR_PARAMS+=" -Dsonar.python.coverage.reportPath=$SAGA_PY_COV";
-  fi
+  getJsCoverage;
+  getPyCoverage;
+  getPyLintReport;
 
   if [ $CI_PULL_REQUEST ];
     if [ "$CIRCLE_BRANCH" != "staging" ] & [ "$STAGING_EXISTS" ];
