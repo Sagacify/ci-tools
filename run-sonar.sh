@@ -101,7 +101,7 @@ function run() {
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME;
   fi
   if [ "$CIRCLE_BRANCH" == "staging" ];
-    then ./$SONAR_VERSION/bin/sonar-scanner DEFAULT_SONAR_PARAMS \
+    then ./$SONAR_VERSION/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging;
   fi
 }
