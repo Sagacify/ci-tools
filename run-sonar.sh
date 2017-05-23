@@ -94,6 +94,7 @@ function run() {
       -Dsonar.projectKey=$SONAR_PROJECT_KEY \
       -Dsonar.github.repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
       -Dsonar.github.pullRequest=${CI_PULL_REQUEST##*/} \
+      -Dsonar.github.oauth=$SAGA_STALIN_TOKEN \
       -Dsonar.analysis.mode=preview;
   fi
   if [ "$CIRCLE_BRANCH" == "master" ];
