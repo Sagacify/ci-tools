@@ -72,7 +72,6 @@ function run() {
   DEFAULT_SONAR_PARAMS="-Dsonar.host.url=$SONAR_HOST
         -Dsonar.login=$SONAR_LOGIN
         -Dsonar.password=$SONAR_PASSWORD
-        -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME
         -Dsonar.projectVersion=$CIRCLE_BUILD_NUM
         -Dsonar.links.homepage=$CIRCLE_REPOSITORY_URL
         -Dsonar.links.ci=$CIRCLE_BUILD_URL
@@ -91,6 +90,7 @@ function run() {
       else SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME
     fi
     then ./$SONAR_VERSION/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
+      -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME \
       -Dsonar.projectKey=$SONAR_PROJECT_KEY \
       -Dsonar.github.repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
       -Dsonar.github.pullRequest=${CI_PULL_REQUEST##*/} \
@@ -99,10 +99,12 @@ function run() {
   fi
   if [ "$CIRCLE_BRANCH" == "master" ];
     then ./$SONAR_VERSION/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
+      -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME;
   fi
   if [ "$CIRCLE_BRANCH" == "staging" ];
     then ./$SONAR_VERSION/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
+      -Dsonar.projectName=$CIRCLE_PROJECT_REPONAME:staging \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging;
   fi
 }
