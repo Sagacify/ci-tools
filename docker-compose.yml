@@ -1,0 +1,4 @@
+node:
+  build: .
+  volumes:
+    - ./src:/opt
