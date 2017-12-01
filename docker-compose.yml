@@ -1,4 +1,4 @@
-node:
+bash:
   build: .
   volumes:
-    - ./src:/opt
+    - ./src:/opt/ci-tools

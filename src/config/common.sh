@@ -1,0 +1,5 @@
+CI_TOOLS_PATH="/opt/ci-tools/"
+DOCUMENTATION_SCOPE="Continuous-integration"
+GITHUB_MAIN_DOC_PATH="https://github.com/Sagacify/atlas/wiki/"
+JAVA_VERSION="1.8"
+SONAR_VERSION="sonar-scanner-2.8"
