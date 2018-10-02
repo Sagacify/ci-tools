@@ -130,22 +130,6 @@ function check() {
           exit 1
       fi
   fi
-
-  if [ -z $CI_API_TOKEN ];
-    then
-      echo "CI_API_TOKEN is not set.";
-      echo "https://github.com/Sagacify/atlas/wiki/Continuous-integration#prerequisites"
-      exit 1;
-    else
-      STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?circle-token=${CI_API_TOKEN}")
-      if [ $STATUS_CODE == "200" ];
-        then echo "This build was canceled.";
-        else
-          echo "Tried cancelling the build, but the ci token was invalid.";
-          echo "https://github.com/Sagacify/atlas/wiki/Continuous-integration#prerequisites"
-          exit -1;
-      fi
-  fi
 }
 
 case "$1" in
