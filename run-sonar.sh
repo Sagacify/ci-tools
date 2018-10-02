@@ -131,25 +131,20 @@ function check() {
       fi
   fi
 
-  if [ -z $CIRCLE_PULL_REQUEST ] && [ "$CIRCLE_BRANCH" != "master" ] && [ "$CIRCLE_BRANCH" != "staging" ];
-  then
-    echo "Stopping build as it is neither a pull-request, master nor staging."
-    echo "https://github.com/Sagacify/atlas/wiki/Continuous-integration#syncronicity-issues"
-    if [ -z $CI_API_TOKEN ];
-      then
-        echo "CI_API_TOKEN is not set.";
-        echo "https://github.com/Sagacify/atlas/wiki/Continuous-integration#prerequisites"
-        exit 1;
-      else
-        STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?circle-token=${CI_API_TOKEN}")
-        if [ $STATUS_CODE == "200" ];
-          then echo "This build was canceled.";
-          else
-            echo "Tried cancelling the build, but the ci token was invalid.";
-            echo "https://github.com/Sagacify/atlas/wiki/Continuous-integration#prerequisites"
-            exit -1;
-        fi
-    fi
+  if [ -z $CI_API_TOKEN ];
+    then
+      echo "CI_API_TOKEN is not set.";
+      echo "https://github.com/Sagacify/atlas/wiki/Continuous-integration#prerequisites"
+      exit 1;
+    else
+      STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -XPOST "https://circleci.com/api/v1/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel?circle-token=${CI_API_TOKEN}")
+      if [ $STATUS_CODE == "200" ];
+        then echo "This build was canceled.";
+        else
+          echo "Tried cancelling the build, but the ci token was invalid.";
+          echo "https://github.com/Sagacify/atlas/wiki/Continuous-integration#prerequisites"
+          exit -1;
+      fi
   fi
 }
 
