@@ -1,10 +1,11 @@
 #!/bin/bash
 
-SONAR_FILENAME="sonar-scanner-cli-2.8"
+SONAR_ZIP_FILENAME="sonar-scanner-cli-2.8.zip"
+SONAR_EXTRACTED_FOLDER="sonar-scanner-2.8"
 
 function install() {
-  wget -N "https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/2.8/${SONAR_FILENAME}.zip";
-  unzip -o "${SONAR_FILENAME}.zip";
+  wget -N "https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/2.8/${SONAR_ZIP_FILENAME}";
+  unzip -o "${SONAR_ZIP_FILENAME}";
 }
 
 function getJsCoverage() {
@@ -90,7 +91,7 @@ function run() {
       then SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging
       else SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME
     fi
-    then ./$SONAR_FILENAME/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
+    then ./$SONAR_EXTRACTED_FOLDER/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
       -Dsonar.projectKey=$SONAR_PROJECT_KEY \
       -Dsonar.github.repository=$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
       -Dsonar.github.pullRequest=${CI_PULL_REQUEST##*/} \
@@ -98,11 +99,11 @@ function run() {
       -Dsonar.analysis.mode=preview;
   fi
   if [ "$CIRCLE_BRANCH" == "master" ];
-    then ./$SONAR_FILENAME/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
+    then ./$SONAR_EXTRACTED_FOLDER/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME;
   fi
   if [ "$CIRCLE_BRANCH" == "staging" ];
-    then ./$SONAR_FILENAME/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
+    then ./$SONAR_EXTRACTED_FOLDER/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
       -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME:staging;
   fi
 }
