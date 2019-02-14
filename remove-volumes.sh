@@ -12,7 +12,7 @@ with open("docker-compose.yml", 'r') as stream:
     try:
         a = yaml.load(stream)
         remove_key_rec(a, 'volumes')
-        print(a)
+        print(yaml.dump(a, default_flow_style=False))
     except yaml.YAMLError as exc:
         print(exc)
 
