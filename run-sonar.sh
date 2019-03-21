@@ -4,7 +4,7 @@ SONAR_ZIP_FILENAME="sonar-scanner-cli-2.8.zip"
 SONAR_EXTRACTED_FOLDER="sonar-scanner-2.8"
 
 function install() {
-  wget -N "https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/2.8/${SONAR_ZIP_FILENAME}";
+  wget -N "https://s3-eu-west-1.amazonaws.com/saga-ops/${SONAR_ZIP_FILENAME}";
   unzip -o "${SONAR_ZIP_FILENAME}";
 }
 
