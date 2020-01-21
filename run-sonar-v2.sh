@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SONAR_ZIP_FILENAME="sonar-scanner-cli-2.8.zip"
-SONAR_EXTRACTED_FOLDER="sonar-scanner-2.8"
+SONAR_ZIP_FILENAME="sonar-scanner-cli-3.3.0.zip"
+SONAR_EXTRACTED_FOLDER="sonar-scanner-3.3.0"
 
 function install() {
   wget -N "https://s3-eu-west-1.amazonaws.com/saga-ops/${SONAR_ZIP_FILENAME}";
@@ -99,7 +99,7 @@ function run() {
 		-Dsonar.github.oauth=$SAGA_STALIN_TOKEN \
 		-Dsonar.analysis.mode=preview;
 	  elif [ "$CIRCLE_BRANCH" == "master" ];
-	    then 
+	    then
 		 echo "ELSE"
 		./$SONAR_EXTRACTED_FOLDER/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
 	      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME;
