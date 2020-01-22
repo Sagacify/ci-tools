@@ -85,12 +85,16 @@ function run() {
 
   if [ $CIRCLE_PULL_REQUEST ] || [ "$CIRCLE_BRANCH" == "master" ]
   then
+  # Install requirements
+  check;
+  install;
+
+  # Run
 	getJsCoverage;
 	getPyCoverage;
 	getPyLintReport;
 	  if [ $CIRCLE_PULL_REQUEST ];
 	    then
-		echo "IF"
 		SONAR_PROJECT_KEY=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME;
 		./$SONAR_EXTRACTED_FOLDER/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
 		-Dsonar.projectKey=$SONAR_PROJECT_KEY \
@@ -100,10 +104,11 @@ function run() {
 		-Dsonar.analysis.mode=preview;
 	  elif [ "$CIRCLE_BRANCH" == "master" ];
 	    then
-		 echo "ELSE"
 		./$SONAR_EXTRACTED_FOLDER/bin/sonar-scanner $DEFAULT_SONAR_PARAMS \
 	      -Dsonar.projectKey=$CIRCLE_PROJECT_USERNAME:$CIRCLE_PROJECT_REPONAME;
 	  fi
+  else
+        echo "To analyze your code you must create a pull request and relaunch analysis"
   fi
 }
 
@@ -133,20 +138,12 @@ function check() {
 }
 
 case "$1" in
-        install)
-            install
-            ;;
-
         run)
             run
             ;;
 
-        check)
-            check
-            ;;
-
         *)
-            echo $"Usage: $0 {install|run|check}"
+            echo $"Usage: $0 {run}"
             exit 1
 
 esac
