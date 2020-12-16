@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import yaml
 
 def remove_key_rec(mapping, removeKey):
     mapping.pop(removeKey, None)
-    for key, value in mapping.iteritems():
+    for key, value in mapping.items():
         if type(value) is dict:
           remove_key_rec(value, removeKey)
 
